@@ -1,0 +1,8 @@
+langgraph
+langgraph-checkpoint-postgres
+psycopg[binary,pool]
+langchain-anthropic
+langchain-tavily
+chromadb
+pydantic
+python-dotenv
