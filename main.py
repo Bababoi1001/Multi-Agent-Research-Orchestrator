@@ -4,15 +4,24 @@ Usage:
     python main.py "your research topic here"
 """
 
+import logging
 import sys
 import uuid
 
 from dotenv import load_dotenv
+
+load_dotenv()  # must run before importing graph -> nodes -> tools,
+                # since tools.py instantiates TavilySearch at import time
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%H:%M:%S",
+)
+
 from langgraph.types import Command
 
 from graph import build_graph
-
-load_dotenv()
 
 
 def run(topic: str) -> None:

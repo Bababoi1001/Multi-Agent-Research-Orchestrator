@@ -5,6 +5,7 @@ memory lookup -> supervisor -> human approval
   -> (back to writer, or finalize) -> end
 """
 
+import logging
 import os
 
 from langgraph.graph import StateGraph, START, END
@@ -24,9 +25,12 @@ from nodes import (
 )
 from state import ResearchState
 
+logger = logging.getLogger(__name__)
+
 
 def fan_out_researchers(state: ResearchState):
     """One Send per sub-question — these run in parallel."""
+    logger.info("[fan_out] spawning %d researcher(s) in parallel", len(state["sub_questions"]))
     return [Send("researcher", {"sub_question": q}) for q in state["sub_questions"]]
 
 
@@ -34,7 +38,14 @@ def review_decision(state: ResearchState):
     """Critic's verdict decides: back to the writer, or done."""
     no_feedback = state.get("feedback") is None
     out_of_revisions = state.get("revision_count", 0) >= MAX_REVISIONS
-    return "finalize" if (no_feedback or out_of_revisions) else "writer"
+    decision = "finalize" if (no_feedback or out_of_revisions) else "writer"
+    logger.info(
+        "[review_decision] no_feedback=%s out_of_revisions=%s -> %s",
+        no_feedback,
+        out_of_revisions,
+        decision,
+    )
+    return decision
 
 
 def build_graph():

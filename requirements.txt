@@ -6,3 +6,4 @@ langchain-tavily
 chromadb
 pydantic
 python-dotenv
+langchain-ollama
